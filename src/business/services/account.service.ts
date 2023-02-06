@@ -57,7 +57,7 @@ export class AccountService {
 
   removeBalance(balance: BalanceDto): boolean {
     const current = this.accountRepository.findOneById(balance.accountId);
-    current.balance -= Math.abs(balance.amount);
+    current.balance = current.balance - Math.abs(balance.amount);
     if (current){
       if (current.balance >= 0) {
         this.accountRepository.update(balance.accountId, current);
