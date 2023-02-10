@@ -5,7 +5,7 @@
   import { AccountEntity, AccountTypeEntity, CustomerEntity, DocumentTypeEntity } from '../../data/persistence/entities';
   // Jwt
   import { JwtService } from '@nestjs/jwt';
-import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentTypeRepository } from '../../data';
+import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentTypeRepository, LoginResponseModel } from '../../data';
   
   @Injectable()
   export class SecurityService {
@@ -28,17 +28,17 @@ import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentT
     //  private readonly jwtService: JwtService
     //) {}
   
-    signIn(user: SignInDto): Array<Object> {
+    signIn(user: SignInDto): LoginResponseModel {
       //const answer = this.customerService.findOneByEmailAndPassword( user.email, user.password );
       const answer = this.customerRepository.findOneByEmailAndPassword( user.email, user.password );
       if (answer) {
-        const token = this.jwtService.sign({ username: answer.email, sub: answer.id }, { secret: "Sofka", expiresIn: "30d" });
-        return [answer, token];
+        const token = this.jwtService.sign({ customer: answer }, { secret: "Sofka", expiresIn: "30d" });
+        return { customer: answer, token: token };
       }
       else throw new UnauthorizedException();
     }
 
-    signUp(user: SignUpDto): Array<Object> {
+    signUp(user: SignUpDto): LoginResponseModel {
       const documentType = new DocumentTypeEntity()
       documentType.name = user.documentTypeName;
 
@@ -47,6 +47,7 @@ import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentT
       newCustomer.document = user.document;
       newCustomer.fullName = user.fullName;
       newCustomer.email = user.email;
+      newCustomer.avatarUrl = user.avatarUrl;
       newCustomer.phone = user.phone;
       newCustomer.password = user.password;
 
@@ -72,19 +73,28 @@ import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentT
           //const account = this.accountService.createAccount(newAccount);
 
           if (account) {
-            const token = this.jwtService.sign({ username: newCustomer.email, sub: newCustomer.id }, { secret: "Sofka", expiresIn: "30d" });
-            return [account, token];
+            const token = this.jwtService.sign({ customer: newCustomer }, { secret: "Sofka", expiresIn: "30d" });
+            return { customer: newCustomer, token: token };
           } else throw new InternalServerErrorException();
         } else throw new InternalServerErrorException();
       } else throw new BadRequestException();
     }
   
-    signOut(JWToken: string): string {
+    isValid(JWToken: string): boolean {
       try {
         const token = this.jwtService.verify(JWToken, { secret: "Sofka" });
         return token;
       } catch {
-        return 'false';
+        return false;
       }
     }
+
+    //signOut(JWToken: string): string {
+    //  try {
+    //    const token = this.jwtService.verify(JWToken, { secret: "Sofka" });
+    //    return token;
+    //  } catch {
+    //    return 'false';
+    //  }
+    //}
   }
