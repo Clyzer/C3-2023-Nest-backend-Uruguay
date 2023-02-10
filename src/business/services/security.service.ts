@@ -1,11 +1,11 @@
-  import { Injectable, InternalServerErrorException, UnauthorizedException, BadRequestException } from '@nestjs/common';
+  import { Injectable, InternalServerErrorException, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
   // Data transfer objects
   import { SignInDto, SignUpDto } from '../../business/dtos';
   // Entities
   import { AccountEntity, AccountTypeEntity, CustomerEntity, DocumentTypeEntity } from '../../data/persistence/entities';
   // Jwt
   import { JwtService } from '@nestjs/jwt';
-import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentTypeRepository, LoginResponseModel } from '../../data';
+  import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentTypeRepository, LoginResponseModel } from '../../data';
   
   @Injectable()
   export class SecurityService {
@@ -80,12 +80,14 @@ import { AccountRepository, AccountTypeRepository, CustomerRepository, DocumentT
       } else throw new BadRequestException();
     }
   
-    isValid(JWToken: string): boolean {
+    isValid(JWToken: string): string {
       try {
         const token = this.jwtService.verify(JWToken, { secret: "Sofka" });
-        return token;
+        if (this.customerRepository.findOneById(token.customer.id)){
+          return token;
+        } else throw new NotFoundException();
       } catch {
-        return false;
+        throw new InternalServerErrorException();
       }
     }
 

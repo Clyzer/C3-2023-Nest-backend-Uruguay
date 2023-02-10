@@ -21,12 +21,8 @@ export class SecurityController {
     }
 
     @Get('/is-valid')
-    isValid(@Query('jwtToken') jwtToken: string): boolean {
+    isValid(@Query('jwtToken') jwtToken: string): string {
         return this.securityService.isValid(jwtToken);
     }
 
-    //@Get('/sign-out')
-    //singOut(@Query('jwtToken') jwtToken: string): string {
-    //    return this.securityService.signOut(jwtToken);
-    //}
 }
