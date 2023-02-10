@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNumber, IsNumberString, IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { IsEmail, IsNumber, IsNumberString, IsOptional, IsPositive, IsString, Min, IsUrl } from 'class-validator';
 
 export class SignUpDto {
 
@@ -30,8 +30,13 @@ export class SignUpDto {
     email: string;
 
     @ApiProperty()
-    @IsNumberString({ message: "phne must to be a number." })
+    @IsNumberString({ message: "phone must to be a number." })
     phone: string;
+
+    @ApiProperty()
+    @IsUrl(undefined, { message: 'avatarurl must to be a url' })
+    @IsOptional()
+    avatarUrl?: string;
 
     @ApiProperty()
     @IsString({ message: "password is not a string." })
