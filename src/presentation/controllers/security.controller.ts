@@ -20,6 +20,11 @@ export class SecurityController {
         return this.securityService.signIn(signIn);
     }
 
+    @Post('/sign-in-google')
+    signInGoogle(@Query('email') email: string): LoginResponseModel {
+        return this.securityService.signInGoogle(email);
+    }
+
     @Get('/is-valid')
     isValid(@Query('jwtToken') jwtToken: string): string {
         return this.securityService.isValid(jwtToken);

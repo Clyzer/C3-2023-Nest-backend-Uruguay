@@ -38,6 +38,16 @@
       else throw new UnauthorizedException();
     }
 
+    signInGoogle(email: string): LoginResponseModel {
+      //const answer = this.customerService.findOneByEmailAndPassword( user.email, user.password );
+      const answer = this.customerRepository.findOneByEmail( email );
+      if (answer) {
+        const token = this.jwtService.sign({ customer: answer }, { secret: "Sofka", expiresIn: "30d" });
+        return { customer: answer, token: token };
+      }
+      else throw new UnauthorizedException();
+    }
+
     signUp(user: SignUpDto): LoginResponseModel {
       const documentType = new DocumentTypeEntity()
       documentType.name = user.documentTypeName;
