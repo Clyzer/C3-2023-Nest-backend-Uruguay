@@ -62,6 +62,11 @@ export class AccountController {
         return this.accountService.getAccountByCustomerId(customer);
     }
 
+    @Get('/get-by-customer-document')
+    getAccountsByDocument(@Query('document') document: string): AccountEntity[] {
+        return this.accountService.getAccountByCustomerDocument(document);
+    }
+
     @Get('/get-account-type-by-account-id')
     getAccountTypeById(@Query('account') account: string): AccountTypeEntity {
         return this.accountService.getAccountTypeById(account);

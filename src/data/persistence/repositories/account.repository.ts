@@ -105,6 +105,17 @@ export class AccountRepository extends GeneralCRUD<AccountEntity> implements IAc
     return finded;
   }
 
+  findByDocument(document: string): AccountEntity[] {
+    let finded = this.database.filter(
+      (item) => 
+        item.customer.document == document &&
+        item.deletedAt == undefined &&
+        item.customer.deletedAt == undefined
+    );
+    if (finded == undefined) throw new NotFoundException();
+    return finded;
+  }
+
   findByAccountType(accountTypeId: string): AccountEntity {
     let finded = this.database.find(
         (item) => 

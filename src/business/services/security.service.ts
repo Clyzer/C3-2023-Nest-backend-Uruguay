@@ -39,7 +39,6 @@
     }
 
     signInGoogle(email: string): LoginResponseModel {
-      //const answer = this.customerService.findOneByEmailAndPassword( user.email, user.password );
       const answer = this.customerRepository.findOneByEmail( email );
       if (answer) {
         const token = this.jwtService.sign({ customer: answer }, { secret: "Sofka", expiresIn: "30d" });
@@ -61,30 +60,32 @@
       newCustomer.phone = user.phone;
       newCustomer.password = user.password;
 
-      if (this.customerRepository.findOneByEmail(newCustomer.email) === undefined){
+      if (!this.customerRepository.findOneByEmailSignup(newCustomer.email)){
 
-        this.documentTypeRepository.register(documentType);
-        //this.customerService.getCustomerTypeRepo().register(documentType);
-        const customer = this.customerRepository.register(newCustomer);
-        //const customer = this.customerService.register(newCustomer);
-        
-        if (customer) {
-          const accountType = new AccountTypeEntity();
-          accountType.name = user.accountTypeName;
-          this.accountTypeRepository.register(accountType);
-          //this.accountService.getAccountTypeRepo().register(accountType);
-
-          const newAccount = new AccountEntity();
-          newAccount.accountType = accountType;
-          newAccount.balance = user.balance || 0;
-          newAccount.customer = customer;
-        
-          const account = this.accountRepository.register(newAccount);
-          //const account = this.accountService.createAccount(newAccount);
-
-          if (account) {
-            const token = this.jwtService.sign({ customer: newCustomer }, { secret: "Sofka", expiresIn: "30d" });
-            return { customer: newCustomer, token: token };
+        if (!this.customerRepository.findOneDocument(newCustomer.document)){
+          this.documentTypeRepository.register(documentType);
+          //this.customerService.getCustomerTypeRepo().register(documentType);
+          const customer = this.customerRepository.register(newCustomer);
+          //const customer = this.customerService.register(newCustomer);
+          
+          if (customer) {
+            const accountType = new AccountTypeEntity();
+            accountType.name = user.accountTypeName;
+            this.accountTypeRepository.register(accountType);
+            //this.accountService.getAccountTypeRepo().register(accountType);
+  
+            const newAccount = new AccountEntity();
+            newAccount.accountType = accountType;
+            newAccount.balance = user.balance || 0;
+            newAccount.customer = customer;
+          
+            const account = this.accountRepository.register(newAccount);
+            //const account = this.accountService.createAccount(newAccount);
+  
+            if (account) {
+              const token = this.jwtService.sign({ customer: newCustomer }, { secret: "Sofka", expiresIn: "30d" });
+              return { customer: newCustomer, token: token };
+            } else throw new InternalServerErrorException();
           } else throw new InternalServerErrorException();
         } else throw new InternalServerErrorException();
       } else throw new BadRequestException();

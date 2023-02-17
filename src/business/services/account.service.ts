@@ -108,6 +108,10 @@ export class AccountService {
     return this.accountRepository.findByCustomer(customerId);
   }
 
+  getAccountByCustomerDocument(document: string): AccountEntity[] {
+    return this.accountRepository.findByDocument(document);
+  }
+
   getAccountTypeById(accountId: string): AccountTypeEntity {
     return this.accountRepository.findOneById(accountId).accountType;
   }

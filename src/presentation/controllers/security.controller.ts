@@ -20,7 +20,7 @@ export class SecurityController {
         return this.securityService.signIn(signIn);
     }
 
-    @Post('/sign-in-google')
+    @Get('/sign-in-google')
     signInGoogle(@Query('email') email: string): LoginResponseModel {
         return this.securityService.signInGoogle(email);
     }

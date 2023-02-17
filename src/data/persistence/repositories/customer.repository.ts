@@ -10,6 +10,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
 
   public static instance: CustomerRepository;
 
+
   public static getInstance(): CustomerRepository {
     if (!CustomerRepository.instance) {
       CustomerRepository.instance = new CustomerRepository();
@@ -66,7 +67,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
   }
 
   findAll(paginator?: PaginationModel): CustomerEntity[] {
-    let finded = this.database.filter(
+    const finded = this.database.filter(
       (item) => item.deletedAt == undefined
     );
     if (finded == undefined) throw new NotFoundException()
@@ -74,7 +75,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
   }
 
   findOneById(id: string): CustomerEntity {
-    let finded = this.database.find(
+    const finded = this.database.find(
       (item) => 
         item.id == id &&
         item.deletedAt == undefined
@@ -95,7 +96,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
   }
 
   findOneByDocumentTypeAndDocument( documentTypeId: string, document: string ): CustomerEntity {
-    let finded = this.database.find(
+    const finded = this.database.find(
       (item) => 
         item.documentType.id == documentTypeId &&
         item.document == document &&
@@ -105,9 +106,29 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
     return finded;
   }
 
-  findOneByEmail(email: string): CustomerEntity | undefined {
-    let finded = this.database.find(
+  findOneDocument( document: string ): CustomerEntity {
+    const finded = this.database.find(
       (item) => 
+        item.document == document &&
+        item.deletedAt == undefined
+    );
+    if (finded == undefined) throw new NotFoundException();
+    return finded;
+  }
+
+  findOneByEmail(email: string): CustomerEntity {
+    const finded = this.database.find(
+      (item) =>
+        item.email == email &&
+        item.deletedAt == undefined
+    );
+    if (finded == undefined) throw new NotFoundException();
+    return finded;
+  }
+
+  findOneByEmailSignup(email: string): CustomerEntity | undefined {
+    const finded = this.database.find(
+      (item) =>
         item.email == email &&
         item.deletedAt == undefined
     );
@@ -115,7 +136,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
   }
 
   findOneByPhone(phone: string): CustomerEntity {
-    let finded = this.database.find(
+    const finded = this.database.find(
       (item) => 
         item.phone == phone &&
         item.deletedAt == undefined
@@ -125,7 +146,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
   }
 
   findByState(state: boolean): CustomerEntity[] {
-    let finded = this.database.filter(
+    const finded = this.database.filter(
       (item) => item.state == state &&
       item.deletedAt == undefined
     );
@@ -134,7 +155,7 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
   }
 
   findSoftDeletedCustomers(): CustomerEntity[] {
-    let finded = this.database.filter(
+    const finded = this.database.filter(
       (item) => item.deletedAt !== undefined
     );
     if (finded == undefined) throw new NotFoundException();
