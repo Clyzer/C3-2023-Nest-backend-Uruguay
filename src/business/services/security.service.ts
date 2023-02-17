@@ -44,7 +44,7 @@
         const token = this.jwtService.sign({ customer: answer }, { secret: "Sofka", expiresIn: "30d" });
         return { customer: answer, token: token };
       }
-      else throw new UnauthorizedException();
+      else throw new NotFoundException();
     }
 
     signUp(user: SignUpDto): LoginResponseModel {
@@ -60,7 +60,7 @@
       newCustomer.phone = user.phone;
       newCustomer.password = user.password;
 
-      if (!this.customerRepository.findOneByEmailSignup(newCustomer.email)){
+      if (!this.customerRepository.findOneByEmail(newCustomer.email)){
 
         if (!this.customerRepository.findOneDocument(newCustomer.document)){
           this.documentTypeRepository.register(documentType);
