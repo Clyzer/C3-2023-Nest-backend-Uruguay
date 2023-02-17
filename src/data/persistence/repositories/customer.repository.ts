@@ -106,13 +106,13 @@ export class CustomerRepository extends GeneralCRUD<CustomerEntity> implements I
     return finded;
   }
 
-  findOneDocument( document: string ): CustomerEntity {
+  findOneDocument( document: string ): CustomerEntity | undefined {
     const finded = this.database.find(
       (item) => 
         item.document == document &&
         item.deletedAt == undefined
     );
-    if (finded == undefined) throw new NotFoundException();
+    if (finded == undefined) return undefined;
     return finded;
   }
 
